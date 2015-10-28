@@ -1,2 +1,2 @@
-# iixi
-iixi : Jennifer's Intelligent X-Carve Interface
+# jixi
+jixi : Jennifer's Intelligent X-Carve Interface
