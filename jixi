@@ -2,7 +2,6 @@
 
 import sys
 from PyQt4 import QtGui, QtCore
-from Jixi.jFieldset import jFieldset
 from Jixi.connectionPanel import connectionPanel
 from Jixi.statusPanel import statusPanel
 from Jixi.commandPanel import commandPanel
