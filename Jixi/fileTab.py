@@ -50,7 +50,7 @@ class fileTab(QtGui.QWidget):
         self.grid.addWidget(QtGui.QLabel('Duration'),3,0)
         self.grid.addWidget(self.durationw,3,1)
 
-        self.grid.addWidget(QtGui.QLabel('Estimated time remaining'),4,0)
+        self.grid.addWidget(QtGui.QLabel('Remaining'),4,0)
         self.grid.addWidget(self.estimationw,4,1)
 
         self.setLayout(self.grid)
