@@ -1,0 +1,5 @@
+#!/bin/bash
+#
+# Start up some virtual com ports for testing
+socat -v -d -d pty,raw,echo=0,link=jport pty,raw,echo=0,link=xport
+

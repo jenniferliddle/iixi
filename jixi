@@ -6,6 +6,7 @@ from Jixi.connectionPanel import connectionPanel
 from Jixi.statusPanel import statusPanel
 from Jixi.commandPanel import commandPanel
 from Jixi.consolePanel import consolePanel
+from Jixi.jSerialThread import jSerialThread
 
 class mainWindow(QtGui.QMainWindow):
 
@@ -23,6 +24,9 @@ class mainWindow(QtGui.QMainWindow):
         grid.addWidget(statusPanel(), 1,0)
         grid.addWidget(commandPanel(), 0,1, 2, 1)
         grid.addWidget(consolePanel(), 2,0, 1, 2)
+
+        self.jSerial = jSerialThread()
+        self.jSerial.start()
 
         self.show()
 
