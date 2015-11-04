@@ -2,10 +2,6 @@
 
 import sys
 from PyQt4 import QtGui, QtCore
-from Jixi.connectionPanel import connectionPanel
-from Jixi.statusPanel import statusPanel
-from Jixi.commandPanel import commandPanel
-from Jixi.consolePanel import consolePanel
 from Jixi.jSerialThread import jRead
 import Jixi.jStatus
 import serial
@@ -19,16 +15,15 @@ class mainWindow(QtGui.QMainWindow):
         c = QtGui.QWidget()
         self.setCentralWidget(c)
 
-        grid = QtGui.QGridLayout()
-        c.setLayout(grid)
+        vbox = QtGui.QVBoxLayout()
+        c.setLayout(vbox)
 
-        grid.addWidget(connectionPanel(), 0,0)
-        self.statusw = statusPanel()
-        grid.addWidget(self.statusw, 1,0)
-        grid.addWidget(commandPanel(), 0,1, 2, 1)
-        grid.addWidget(consolePanel(), 2,0, 1, 2)
+        self.tw = QtGui.QTextEdit(self)
+        self.tw.setReadOnly(True)
 
-        self.port = serial.Serial('jport')
+        vbox.addWidget(self.tw)
+
+        self.port = serial.Serial('xport')
         self.readThread = jRead(self.port)
         self.readThread.start()
         self.connect(self.readThread, QtCore.SIGNAL("read_data(QString)"), self.read_data)
@@ -36,11 +31,9 @@ class mainWindow(QtGui.QMainWindow):
         self.show()
 
     def read_data(self, txt):
-        txt = str(txt).strip()
-        Jixi.jStatus.msg(txt)
-        if (txt[0]=='<' and txt[-1]=='>'):
-            # looks like a status message
-            self.statusw.update(txt)
+        self.tw.append('Rcvd> '+txt)
+        if (txt == '?'):
+            self.port.write('<Idle,MPos:0.000,0.000,0.000,WPos:0.000,0.000,0.000>\n')
 
 app = QtGui.QApplication(sys.argv)
 w = mainWindow()

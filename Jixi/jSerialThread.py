@@ -1,19 +1,30 @@
-from PyQt4.QtCore import QThread
+from PyQt4.QtCore import QThread, SIGNAL
 import serial
 import Jixi.jStatus
 
 
-class jSerialThread(QThread):
+class jRead(QThread):
 
-    def __init__(self):
+    data = ''
+
+    def __init__(self, port):
         QThread.__init__(self)
-        self.serial = serial.Serial('jport')
-        Jixi.jStatus.msg(self.serial.name)
-        self.serial.write('Serial port open!')
+        Jixi.jStatus.msg(port.name)
+        self.port = port
 
     def __del__(self):
-        self.serial.close()
+        self.port.close()
         self.wait()
 
     def run(self):
-        pass
+        line = ''
+        while (True):
+            c = self.port.read()
+            if (c == '?'):
+                self.emit(SIGNAL('read_data(QString)'), c)
+            if (c == '\n'):
+                self.emit(SIGNAL('read_data(QString)'), line)
+                line = ''
+            else:
+                line += c
+
