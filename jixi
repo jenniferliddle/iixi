@@ -7,8 +7,15 @@ from Jixi.statusPanel import statusPanel
 from Jixi.commandPanel import commandPanel
 from Jixi.consolePanel import consolePanel
 from Jixi.jSerialThread import jRead
+from Jixi.jConfig import jConfig
 import Jixi.jStatus
 import serial
+
+class jixiApp(QtGui.QApplication):
+
+  def __init__(self, args):
+    super(jixiApp, self).__init__(args)
+    self.config = jConfig()
 
 class mainWindow(QtGui.QMainWindow):
 
@@ -42,7 +49,7 @@ class mainWindow(QtGui.QMainWindow):
             # looks like a status message
             self.statusw.update(txt)
 
-app = QtGui.QApplication(sys.argv)
+app = jixiApp(sys.argv)
 w = mainWindow()
 sys.exit(app.exec_())
 
