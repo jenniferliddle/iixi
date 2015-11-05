@@ -2,6 +2,7 @@ from PyQt4 import QtGui, QtCore
 import os
 import time
 import Jixi.jStatus
+import shlex, subprocess
 
 class fileTab(QtGui.QWidget):
     def __init__(self):
@@ -75,6 +76,11 @@ class fileTab(QtGui.QWidget):
 
     def visualizeFile(self):
         Jixi.jStatus.msg('visualizing')
+        config = QtCore.QCoreApplication.instance().config
+        program = config.get('Visualizer','program')
+        args = shlex.split(program + ' ' + str(self.fnamew.text()))
+        print args
+        subprocess.Popen(args)        
 
     def showFileDetails(self, fname):
         self.fnamew.setText(fname)
