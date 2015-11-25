@@ -38,10 +38,11 @@ class mainWindow(QtGui.QMainWindow):
         grid.addWidget(consolePanel(), 2,0, 1, 2)
 
         self.comport = jComPort()
-        #self.comport.open()
+        self.comport.open()
         self.readThread = jRead(self.comport)
         self.readThread.start()
         self.connect(self.readThread, QtCore.SIGNAL("read_data(QString)"), self.read_data)
+        self.comport.connected.connect(self.connected)
 
         self.show()
 
@@ -51,6 +52,10 @@ class mainWindow(QtGui.QMainWindow):
         if (txt[0]=='<' and txt[-1]=='>'):
             # looks like a status message
             self.statusw.update(txt)
+
+    def connected(self, isconnected):
+        print "Received signal", isconnected
+        self.connectionw.show_connected(isconnected)
 
 app = jixiApp(sys.argv)
 w = mainWindow()

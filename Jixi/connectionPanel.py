@@ -25,7 +25,8 @@ class connectionPanel(jFieldset):
         self.baudw.activated[str].connect(self.baudChanged)
         self.grid.addWidget(self.baudw,1,1)
 
-        self.grid.addWidget(QtGui.QPushButton('Connect'),1,2)
+        self.connectw = QtGui.QPushButton('Connect')
+        self.grid.addWidget(self.connectw,1,2)
 
     def portChanged(self, text):
         if (str(text) != self.config.get('Comms','port')):
@@ -37,3 +38,9 @@ class connectionPanel(jFieldset):
         if (text != self.config.get('Comms','baud')):
             self.config.set('Comms','baud',str(text))
             self.config.save()
+
+    def show_connected(self, isconnected):
+        if (isconnected):
+            self.connectw.setStyleSheet("background-color: green")
+        else:
+            self.connectw.setStyleSheet("background-color: red")
