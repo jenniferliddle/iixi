@@ -1,7 +1,7 @@
 from PyQt4.QtCore import QThread, SIGNAL
-import serial
+from serial import SerialException
 import Jixi.jStatus
-
+import time
 
 class jRead(QThread):
 
@@ -9,17 +9,26 @@ class jRead(QThread):
 
     def __init__(self, port):
         QThread.__init__(self)
-        Jixi.jStatus.msg(port.name)
         self.port = port
 
     def __del__(self):
-        self.port.close()
         self.wait()
 
     def run(self):
         line = ''
         while (True):
-            c = self.port.read()
+            if (not self.port.isOpen()):
+                time.sleep(1)
+                continue
+
+            c = ''
+            try:
+                c = self.port.read()
+            except SerialException as e:
+                Jixi.jStatus.error(e.message)
+            except ValueError as e:
+                Jixi.jStatus.error(e.message)
+
             if (c == '?'):
                 self.emit(SIGNAL('read_data(QString)'), c)
             if (c == '\n'):

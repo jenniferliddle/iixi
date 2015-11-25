@@ -8,6 +8,7 @@ from Jixi.commandPanel import commandPanel
 from Jixi.consolePanel import consolePanel
 from Jixi.jSerialThread import jRead
 from Jixi.jConfig import jConfig
+from Jixi.jComPort import jComPort
 import Jixi.jStatus
 import serial
 
@@ -29,14 +30,16 @@ class mainWindow(QtGui.QMainWindow):
         grid = QtGui.QGridLayout()
         c.setLayout(grid)
 
-        grid.addWidget(connectionPanel(), 0,0)
+        self.connectionw = connectionPanel()
+        grid.addWidget(self.connectionw, 0,0)
         self.statusw = statusPanel()
         grid.addWidget(self.statusw, 1,0)
         grid.addWidget(commandPanel(), 0,1, 2, 1)
         grid.addWidget(consolePanel(), 2,0, 1, 2)
 
-        self.port = serial.Serial('jport')
-        self.readThread = jRead(self.port)
+        self.comport = jComPort()
+        #self.comport.open()
+        self.readThread = jRead(self.comport)
         self.readThread.start()
         self.connect(self.readThread, QtCore.SIGNAL("read_data(QString)"), self.read_data)
 

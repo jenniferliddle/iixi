@@ -49,7 +49,7 @@ class commandTab(QtGui.QWidget):
         self.setLayout(self.grid)
 
     def setHomePosition(self):
-        p = QtCore.QCoreApplication.instance().topLevelWidgets()[0].port
+        p = QtCore.QCoreApplication.instance().topLevelWidgets()[0].comport
         p.write('?')
         return True
 
