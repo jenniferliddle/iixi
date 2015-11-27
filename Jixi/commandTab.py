@@ -1,6 +1,9 @@
 from PyQt4 import QtGui, QtCore
 
 class commandTab(QtGui.QWidget):
+
+    serial_send_signal = QtCore.pyqtSignal(str)
+
     def __init__(self):
         super(commandTab, self).__init__()
 
@@ -17,6 +20,7 @@ class commandTab(QtGui.QWidget):
         stepw.setSingleStep(0.1)
         stepw.setSuffix('mm')
 
+        # make buttons fixed size to make them square, rather than default to rectangular
         xplus = QtGui.QPushButton('X+')
         xplus.setFixedSize(50,50)
         xminus = QtGui.QPushButton('X-')
@@ -49,8 +53,7 @@ class commandTab(QtGui.QWidget):
         self.setLayout(self.grid)
 
     def setHomePosition(self):
-        p = QtCore.QCoreApplication.instance().topLevelWidgets()[0].comport
-        p.write('?')
+        self.serial_send_signal.emit('?')
         return True
 
     def goHomePosition(self):

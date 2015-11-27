@@ -18,7 +18,6 @@ class jComPort(QtCore.QObject):
         if self.isOpen(): self.serial.close()
 
     def open(self):
-        print "Trying toopen port"
         self.serial.port = 'jport'
         try:
             #super(jComPort,self).open()
@@ -28,14 +27,13 @@ class jComPort(QtCore.QObject):
         except ValueError as e:
             Jixi.jStatus.error(e.message)
 
-        print "sending signal"
+        # send signal up to dialog to show status
         self.connected.emit(self.isOpen())
 
     def read(self):
         if (not self.isOpen()): self.open()
         c = ''
         try:
-            #c = super(jComPort,self).read()
             c = self.serial.read()
         except serial.SerialException as e:
             Jixi.jStatus.error(e.message)

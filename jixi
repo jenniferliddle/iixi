@@ -17,8 +17,13 @@ class jixiApp(QtGui.QApplication):
   def __init__(self, args):
     super(jixiApp, self).__init__(args)
     self.config = jConfig()
+    self.comport = jComPort()
+    self.readThread = jRead(self.comport)
+
+
 
 class mainWindow(QtGui.QMainWindow):
+
 
     def __init__(self):
         super(mainWindow, self).__init__()
@@ -27,25 +32,36 @@ class mainWindow(QtGui.QMainWindow):
         c = QtGui.QWidget()
         self.setCentralWidget(c)
 
+        # grid to hold all panels
         grid = QtGui.QGridLayout()
         c.setLayout(grid)
 
+        # connection panel
         self.connectionw = connectionPanel()
         grid.addWidget(self.connectionw, 0,0)
+
+        # status panel
         self.statusw = statusPanel()
         grid.addWidget(self.statusw, 1,0)
-        grid.addWidget(commandPanel(), 0,1, 2, 1)
+
+        # command panel 
+        self.commandPanelw = commandPanel()
+        self.commandPanelw.serial_send_signal.connect(self.serial_write)
+        grid.addWidget(self.commandPanelw, 0,1, 2, 1)
+
+        # console panel
         grid.addWidget(consolePanel(), 2,0, 1, 2)
 
-        self.comport = jComPort()
-        self.comport.open()
-        self.readThread = jRead(self.comport)
-        self.readThread.start()
-        self.connect(self.readThread, QtCore.SIGNAL("read_data(QString)"), self.read_data)
+        self.comport = QtCore.QCoreApplication.instance().comport
+        self.readThread = QtCore.QCoreApplication.instance().readThread
         self.comport.connected.connect(self.connected)
+        self.comport.open()
+        self.readThread.read_signal.connect(self.read_data)
+        self.readThread.start()
 
         self.show()
 
+    # process a line of data from the serial port
     def read_data(self, txt):
         txt = str(txt).strip()
         Jixi.jStatus.msg(txt)
@@ -53,9 +69,14 @@ class mainWindow(QtGui.QMainWindow):
             # looks like a status message
             self.statusw.update(txt)
 
+    # display connection status
     def connected(self, isconnected):
-        print "Received signal", isconnected
         self.connectionw.show_connected(isconnected)
+
+    # send data to the serial port
+    def serial_write(self, txt):
+        self.comport.write(str(txt))
+
 
 app = jixiApp(sys.argv)
 w = mainWindow()

@@ -1,10 +1,11 @@
-from PyQt4.QtCore import QThread, SIGNAL
+from PyQt4.QtCore import QThread, pyqtSignal
 from serial import SerialException
 import Jixi.jStatus
 import time
 
 class jRead(QThread):
 
+    read_signal = pyqtSignal(str)
     data = ''
 
     def __init__(self, port):
@@ -30,9 +31,9 @@ class jRead(QThread):
                 Jixi.jStatus.error(e.message)
 
             if (c == '?'):
-                self.emit(SIGNAL('read_data(QString)'), c)
+                self.read_signal.emit(c)
             if (c == '\n'):
-                self.emit(SIGNAL('read_data(QString)'), line)
+                self.read_signal.emit(line)
                 line = ''
             else:
                 line += c

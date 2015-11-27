@@ -1,10 +1,15 @@
 from PyQt4 import QtGui, QtCore
+from Jixi.jFileThread import jFileThread
+
 import os
 import time
 import Jixi.jStatus
 import shlex, subprocess
 
 class fileTab(QtGui.QWidget):
+
+    serial_send_signal = QtCore.pyqtSignal(str)
+
     def __init__(self):
         super(fileTab, self).__init__()
         btn = QtGui.QPushButton('Select File')
@@ -56,6 +61,9 @@ class fileTab(QtGui.QWidget):
 
         self.setLayout(self.grid)
 
+        self.filethread = jFileThread()
+        self.filethread.serial_send_signal.connect(self.serial_send_signal)
+
     def showDialog(self):
         fname = QtGui.QFileDialog.getOpenFileName(self, 'Select file')
         if (fname):
@@ -67,19 +75,24 @@ class fileTab(QtGui.QWidget):
 
     def sendFile(self):
         Jixi.jStatus.msg('sending')
+        self.filethread.setFilename(self.fnamew.text())
+        self.filethread.open()
+        self.filethread.setStatus('send')
+        self.filethread.start()
 
     def pauseFile(self):
         Jixi.jStatus.msg('pausing')
+        self.filethread.setStatus('pause')
 
     def cancelFile(self):
         Jixi.jStatus.msg('cancelling')
+        self.filethread.cancel()
 
     def visualizeFile(self):
         Jixi.jStatus.msg('visualizing')
         config = QtCore.QCoreApplication.instance().config
         program = config.get('Visualizer','program')
         args = shlex.split(program + ' ' + str(self.fnamew.text()))
-        print args
         subprocess.Popen(args)        
 
     def showFileDetails(self, fname):

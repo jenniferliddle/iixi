@@ -8,9 +8,8 @@ class jConfig(SafeConfigParser):
     def __init__(self, defaults = None):
 
         SafeConfigParser.__init__(self)
-        if self.read(self.FILENAME):
-            print "Found"
-        else:
+        # read config file, set defaults and save if not found
+        if not self.read(self.FILENAME):
             self.add_section('Comms')
             self.set('Comms', 'port', '')
             self.set('Comms', 'baud', '115200')
